@@ -1,0 +1,10 @@
+/Users/frankiefloyd/thales/repo2/app/target/debug/deps/ratatui-bd9eeb81c121a9f0.d: /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/lib.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/prelude.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets/stateful_widget_ref.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets/widget_ref.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/init.rs
+
+/Users/frankiefloyd/thales/repo2/app/target/debug/deps/libratatui-bd9eeb81c121a9f0.rmeta: /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/lib.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/prelude.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets/stateful_widget_ref.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets/widget_ref.rs /Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/init.rs
+
+/Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/lib.rs:
+/Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/prelude.rs:
+/Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets.rs:
+/Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets/stateful_widget_ref.rs:
+/Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/widgets/widget_ref.rs:
+/Users/frankiefloyd/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ratatui-0.30.0/src/init.rs:

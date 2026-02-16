@@ -1,0 +1,70 @@
+# =========================
+# Rust / Cargo
+# =========================
+
+# Dossier de build
+/target/
+
+# Cargo.lock
+# ➜ Garde-le pour une application (bin)
+# ➜ Ignore-le pour une librairie si tu préfères
+# Cargo.lock
+
+# Fichiers générés par rustfmt
+**/*.rs.bk
+
+# =========================
+# IDE / Editors
+# =========================
+
+# VSCode
+.vscode/
+
+# IntelliJ / CLion
+.idea/
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+*~
+
+# =========================
+# OS
+# =========================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# =========================
+# Logs
+# =========================
+
+*.log
+
+# =========================
+# Env files
+# =========================
+
+.env
+.env.*
+
+# =========================
+# Debugging
+# =========================
+
+*.profraw
+*.profdata
+
+# =========================
+# Temporary
+# =========================
+
+tmp/
+temp/
+
