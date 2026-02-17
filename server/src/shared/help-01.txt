@@ -1,0 +1,5 @@
+Welcome to the chat server.
+Type your messages and they will be broadcast to all connected clients.
+Commands:
+/help - show this message
+/quit - disconnect from the server

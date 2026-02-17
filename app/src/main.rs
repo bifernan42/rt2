@@ -14,7 +14,8 @@
 //! [examples readme]: https://github.com/ratatui/ratatui/blob/main/examples/README.md
 
 use std::{
-    net::UdpSocket,
+    io::{Read, Write},
+    net::TcpStream,
     sync::mpsc::{self, Receiver, Sender},
     thread,
     time::Duration,
@@ -30,54 +31,49 @@ use ratatui::{
     widgets::{Block, List, ListItem, Paragraph},
 };
 
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-enum NetMessage {
-    Join { username: String },
-    Leave { username: String },
-    Chat { username: String, content: String },
-}
-
-fn send_udp(socket: &UdpSocket, msg: &NetMessage) {
-    let data = serde_json::to_vec(msg).unwrap();
-    let _ = socket.send(&data);
-}
-
 fn main() -> Result<()> {
-    let server_addr = "127.0.0.1:8080";
-    let username = "Alice".to_string();
+    let server_addr = "127.0.0.1:42069";
 
-    let (network_tx, network_rx) = mpsc::channel::<NetMessage>();
-    let (message_tx, message_rx) = mpsc::channel::<NetMessage>();
+    let (network_tx, network_rx) = mpsc::channel::<String>();
+    let (message_tx, message_rx) = mpsc::channel::<String>();
 
-    let username_clone = username.clone();
     let network_handle = thread::spawn(move || {
-        let socket = UdpSocket::bind("0.0.0.0:35000").expect("bind failed");
-        socket.connect(server_addr).expect("Connect failed");
-        socket
+        let mut stream = TcpStream::connect(server_addr).expect("connect failed");
+        stream
             .set_nonblocking(true)
             .expect("failed to set non blocking");
-        // On envoie le join :
-        send_udp(
-            &socket,
-            &NetMessage::Join {
-                username: username_clone,
-            },
-        );
 
+        let mut read_buf = Vec::new();
         let mut buf = [0u8; 2048];
 
         loop {
-            // while let pour traiter une file de messages potentiels
             while let Ok(msg) = network_rx.try_recv() {
-                send_udp(&socket, &msg);
+                let mut line = msg;
+                if !line.ends_with('\n') {
+                    line.push('\n');
+                }
+                let _ = stream.write_all(line.as_bytes());
             }
 
-            match socket.recv(&mut buf) {
+            match stream.read(&mut buf) {
+                Ok(0) => break,
                 Ok(size) => {
-                    if let Ok(msg) = serde_json::from_slice::<NetMessage>(&buf[..size]) {
-                        message_tx.send(msg).ok();
+                    read_buf.extend_from_slice(&buf[..size]);
+                    loop {
+                        if let Some(pos) = read_buf.iter().position(|&b| b == b'\n') {
+                            let line: Vec<u8> = read_buf.drain(..=pos).collect();
+                            if let Ok(mut s) = String::from_utf8(line) {
+                                if s.ends_with('\n') {
+                                    s.pop();
+                                }
+                                if s.ends_with('\r') {
+                                    s.pop();
+                                }
+                                let _ = message_tx.send(s);
+                            }
+                        } else {
+                            break;
+                        }
                     }
                 }
                 Err(_) => {}
@@ -88,17 +84,16 @@ fn main() -> Result<()> {
 
     color_eyre::install()?;
     let terminal = ratatui::init();
-    let app_result = App::new(network_tx, message_rx, username).run(terminal);
+    let app_result = App::new(network_tx, message_rx).run(terminal);
     ratatui::restore();
     network_handle.join().ok();
     app_result
 }
 
 struct App {
-    username: String,
     input: String,
-    network_tx: Sender<NetMessage>,
-    message_rx: Receiver<NetMessage>,
+    network_tx: Sender<String>,
+    message_rx: Receiver<String>,
     character_index: usize,
     input_mode: InputMode,
     messages: Vec<String>,
@@ -111,12 +106,10 @@ enum InputMode {
 
 impl App {
     const fn new(
-        network_tx: Sender<NetMessage>,
-        message_rx: Receiver<NetMessage>,
-        username: String,
+        network_tx: Sender<String>,
+        message_rx: Receiver<String>,
     ) -> Self {
         Self {
-            username: username,
             input: String::new(),
             network_tx: network_tx,
             message_rx: message_rx,
@@ -172,15 +165,8 @@ impl App {
     }
 
     fn submit_message(&mut self) {
-        let content = self.input.clone();
-
-        let msg = NetMessage::Chat {
-            username: self.username.clone(),
-            content: content.clone(),
-        };
-
+        let msg = self.input.clone();
         self.network_tx.send(msg).ok();
-        self.messages.push(content.clone()); // #TODO il faut l'envoyer a travers une channel
         self.input.clear();
         self.reset_cursor();
     }
@@ -188,17 +174,7 @@ impl App {
     fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
         loop {
             while let Ok(msg) = self.message_rx.try_recv() {
-                match msg {
-                    NetMessage::Chat { username, content } => {
-                        self.messages.push(format!("{username}: {content}"));
-                    }
-                    NetMessage::Join { username } => {
-                        self.messages.push(format!("{username}: joined the chat"));
-                    }
-                    NetMessage::Leave { username } => {
-                        self.messages.push(format!("{username}: left the chat"));
-                    }
-                }
+                self.messages.push(msg);
             }
             terminal.draw(|frame| self.draw(frame))?;
             if let Event::Key(key) = event::read()? {
